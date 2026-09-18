@@ -1,8 +1,8 @@
 from core.security import hash_password
 from dependencies.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, status
-from models.user import User
-from schemas.auth import RegisterRequest, UserPublic
+from api.models.user_model import User
+from api.schemas.auth_schema import RegisterRequest, UserPublic
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
