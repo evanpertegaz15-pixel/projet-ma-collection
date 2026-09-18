@@ -46,3 +46,6 @@ api/.ruff_cache/
 # Misc
 logs/
 *.log
+
+database.db
+__pycache__
