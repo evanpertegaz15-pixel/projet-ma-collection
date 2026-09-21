@@ -11,6 +11,6 @@ class LoginRequest(BaseModel):
     password: str
 
 #Server render
-class UserPublic(BaseModel):
-    id: int
-    email: str
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

@@ -1,10 +1,12 @@
 import jwt
+from core.jwt import get_current_user
 from core.security import hash_password, verify_password
 from datetime import datetime, timedelta, timezone
 from dependencies.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, status
-from api.models.user_model import User
-from api.schemas.auth_schema import RegisterRequest, UserPublic
+from models.user_model import User
+from schemas.auth_schema import RegisterRequest, LoginRequest, TokenResponse
+from schemas.user_schema import UserPublic
 from core.config import settings
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -26,8 +28,8 @@ async def register(data: RegisterRequest, session: AsyncSession = Depends(get_se
     await session.refresh(user) #Fetching db
     return user
 
-@router.post("/auth/login", response_model=UserPublic, status_code=status.HTTP_200_OK)
-async def login(data: RegisterRequest, session: AsyncSession = Depends(get_session)):
+@router.post("/auth/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)):
     result = await session.exec(select(User).where(User.email == data.email))
     user = result.first()
     if not user:
@@ -41,3 +43,7 @@ async def login(data: RegisterRequest, session: AsyncSession = Depends(get_sessi
     }
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return {"access_token": token, "token_type": "bearer"}
+
+@router.get("/auth/me", response_model=UserPublic, status_code=status.HTTP_200_OK)
+async def me(user: User = Depends(get_current_user)):
+    return user
