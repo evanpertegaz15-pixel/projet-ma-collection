@@ -3,9 +3,15 @@ from core.security import hash_password
 from db.init_db import engine, async_session
 from models.item_model import Item
 from models.user_model import User
+from seed_items.artillery import ARTILLERY_ITEMS
+from seed_items.explosives import EXPLOSIVES_ITEMS
+from seed_items.firearms import FIREARMS_ITEMS
+from seed_items.melee import MELEE_ITEMS
+from seed_items.naval import NAVAL_ITEMS
+from seed_items.support import SUPPORT_ITEMS
 from sqlmodel import select, SQLModel
 
-ITEMS = []
+ITEMS = ARTILLERY_ITEMS + EXPLOSIVES_ITEMS + FIREARMS_ITEMS + MELEE_ITEMS + NAVAL_ITEMS + SUPPORT_ITEMS
 
 async def create_db():
     print("Initialisation des tables...")
