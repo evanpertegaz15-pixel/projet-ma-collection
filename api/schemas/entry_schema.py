@@ -12,3 +12,14 @@ class EntryPublic(BaseModel):
     commentaire: str | None
     date_ajout: datetime
     item: ItemPublic
+
+class EntryCreate(BaseModel):
+    item_id: int
+    statut: EntryType
+    note: int | None = None
+    commentaire: str | None = None
+
+class EntryUpdate(BaseModel):
+    statut: EntryType | None = None
+    note: int | None = None
+    commentaire: str | None = None
