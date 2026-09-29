@@ -11,7 +11,7 @@ from sqlmodel import select
 
 collection_router = APIRouter()
 
-@collection_router.get("/me/collection", response_model=list[EntryPublic], status_code=status.HTTP_200_OK)
+@collection_router.get("/me/collection", response_model=list[EntryPublic], status_code=status.HTTP_200_OK, summary="Renvoie la collection de l'utilisateur actif.")
 async def get_collection(statut: EntryType | None = None, tri: str | None = None, session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     query = select(Entry).where(Entry.user_id == user.id)
     if statut:
@@ -35,7 +35,7 @@ async def get_collection(statut: EntryType | None = None, tri: str | None = None
         ))
     return response
 
-@collection_router.post("/me/collection", response_model=EntryPublic, status_code=status.HTTP_201_CREATED)
+@collection_router.post("/me/collection", response_model=EntryPublic, status_code=status.HTTP_201_CREATED, summary="Ajoute un item dans la collection de l'utilisateur.")
 async def add_item(data:EntryCreate, session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     item = await session.get(Item, data.item_id)
     if not item:
@@ -63,7 +63,7 @@ async def add_item(data:EntryCreate, session: AsyncSession = Depends(get_session
         item=ItemPublic(**item.model_dump())
     )
 
-@collection_router.patch("/me/collection/{entry_id}", response_model=EntryPublic, status_code=status.HTTP_200_OK)
+@collection_router.patch("/me/collection/{entry_id}", response_model=EntryPublic, status_code=status.HTTP_200_OK, summary="Met à jour un item de la collection.")
 async def update_item(entry_id: int, data: EntryUpdate, session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     entry = await session.get(Entry, entry_id)
     if not entry or entry.user_id != user.id:
@@ -88,7 +88,7 @@ async def update_item(entry_id: int, data: EntryUpdate, session: AsyncSession = 
     )
     
 
-@collection_router.delete("/me/collection/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
+@collection_router.delete("/me/collection/{entry_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Supprime un item de la collection.")
 async def delete_item(entry_id: int, session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     entry = await session.get(Entry, entry_id)
     if not entry or entry.user_id != user.id:
@@ -97,7 +97,7 @@ async def delete_item(entry_id: int, session: AsyncSession = Depends(get_session
     await session.commit()
     return
 
-@collection_router.get("/me/stats", response_model=EntryStats, status_code=status.HTTP_200_OK)
+@collection_router.get("/me/stats", response_model=EntryStats, status_code=status.HTTP_200_OK, summary="Renvoie les statistiques de la collection.")
 async def get_stats(session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     query = select(Entry).where(Entry.user_id == user.id)
     results = await session.exec(query)

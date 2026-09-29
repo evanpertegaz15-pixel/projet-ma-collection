@@ -13,7 +13,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 auth_router = APIRouter()
 
-@auth_router.post("/auth/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
+@auth_router.post("/auth/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED, summary="Permet à un utilisateur de créer un compte.")
 async def register(data: RegisterRequest, session: AsyncSession = Depends(get_session)):
     if data.password != data.confirm_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Les mots de passe ne correspondent pas.")
@@ -28,7 +28,7 @@ async def register(data: RegisterRequest, session: AsyncSession = Depends(get_se
     await session.refresh(user) #Fetching db
     return user
 
-@auth_router.post("/auth/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
+@auth_router.post("/auth/login", response_model=TokenResponse, status_code=status.HTTP_200_OK, summary="Permet à un utilisateur de se connecter à son compte.")
 async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)):
     result = await session.exec(select(User).where(User.email == data.email))
     user = result.first()
@@ -44,6 +44,6 @@ async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)
     token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
     return {"access_token": token, "token_type": "bearer"}
 
-@auth_router.get("/auth/me", response_model=UserPublic, status_code=status.HTTP_200_OK)
+@auth_router.get("/auth/me", response_model=UserPublic, status_code=status.HTTP_200_OK, summary="Renvoie l'utilisateur actif.")
 async def me(user: User = Depends(get_current_user)):
     return user

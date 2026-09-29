@@ -7,7 +7,7 @@ from sqlmodel import select
 
 items_router = APIRouter()
 
-@items_router.get("/items", response_model=ItemList, status_code=status.HTTP_200_OK)
+@items_router.get("/items", response_model=ItemList, status_code=status.HTTP_200_OK, summary="Renvoie la liste des items.")
 async def list_items(q: str | None = None, categorie: ItemType | None = None, page: int = Query(1, ge=1), limit: int = Query(12, ge=1, le=50), session: AsyncSession = Depends(get_session)):
     query = select(Item) # SELECT * FROM item
     if q:
@@ -19,7 +19,7 @@ async def list_items(q: str | None = None, categorie: ItemType | None = None, pa
     items = (await session.exec(query)).all()
     return {"total": total, "page": page, "limit": limit, "results": items}
 
-@items_router.get("/items/{item_id}", response_model=ItemPublic, status_code=status.HTTP_200_OK)
+@items_router.get("/items/{item_id}", response_model=ItemPublic, status_code=status.HTTP_200_OK, summary="Renvoie l'item spécifique à cet identifiant.")
 async def get_item(item_id: int, session: AsyncSession = Depends(get_session)):
     result = await session.exec(select(Item).where(Item.id == item_id))
     item = result.first()
