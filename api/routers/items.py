@@ -1,13 +1,13 @@
 from dependencies.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models.item_model import Item
-from schemas.item_schema import ItemPublic, ItemType
+from schemas.item_schema import ItemPublic, ItemList, ItemType
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
 items_router = APIRouter()
 
-@items_router.get("/items", status_code=status.HTTP_200_OK)
+@items_router.get("/items", response_model=ItemList, status_code=status.HTTP_200_OK)
 async def list_items(q: str | None = None, categorie: ItemType | None = None, page: int = Query(1, ge=1), limit: int = Query(12, ge=1, le=50), session: AsyncSession = Depends(get_session)):
     query = select(Item) # SELECT * FROM item
     if q:

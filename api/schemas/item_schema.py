@@ -11,3 +11,9 @@ class ItemPublic(BaseModel):
     image_url: str
     year: int
     item_range: int
+
+class ItemList(BaseModel):
+    total: int
+    page: int
+    limit: int
+    results: list[ItemPublic]

@@ -23,3 +23,8 @@ class EntryUpdate(BaseModel):
     statut: EntryType | None = None
     note: int | None = None
     commentaire: str | None = None
+
+class EntryStats(BaseModel):
+    total: int
+    par_statut: dict[str, int]
+    note_moyenne: float | None

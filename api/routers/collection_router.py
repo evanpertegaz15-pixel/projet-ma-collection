@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from models.entry_model import Entry
 from models.item_model import Item
 from models.user_model import User
-from schemas.entry_schema import EntryCreate, EntryPublic, EntryUpdate, EntryType
+from schemas.entry_schema import EntryCreate, EntryPublic, EntryUpdate, EntryStats, EntryType
 from schemas.item_schema import ItemPublic
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -97,7 +97,7 @@ async def delete_item(entry_id: int, session: AsyncSession = Depends(get_session
     await session.commit()
     return
 
-@collection_router.get("/me/stats", status_code=status.HTTP_200_OK)
+@collection_router.get("/me/stats", response_model=EntryStats, status_code=status.HTTP_200_OK)
 async def get_stats(session: AsyncSession = Depends(get_session), user: User = Depends(get_current_user)):
     query = select(Entry).where(Entry.user_id == user.id)
     results = await session.exec(query)
