@@ -2,6 +2,7 @@ from dependencies.db import get_session
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models.item_model import Item
 from schemas.item_schema import ItemPublic, ItemList, ItemType
+from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
@@ -14,7 +15,8 @@ async def list_items(q: str | None = None, categorie: ItemType | None = None, pa
         query = query.where(Item.name.contains(q)) # WHERE name LIKE %q%
     if categorie:
         query = query.where(Item.categorie == categorie) # AND categorie = categorie
-    total = (await session.exec(query)).count() # SELECT COUNT(q)
+    total_query = select(func.count()).select_from(query.subquery())
+    total = (await session.exec(total_query)).one()
     query = query.offset((page - 1) * limit).limit(limit) #items from offset to limit -> 1-12 ; 13-24 ; 25-36, etc.
     items = (await session.exec(query)).all()
     return {"total": total, "page": page, "limit": limit, "results": items}

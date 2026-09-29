@@ -39,3 +39,4 @@ npm install
 npm run dev
 ```
 - Le site est ensuite accessible sur `http://localhost:5173`
+- Le web utilise `http://localhost:8000` par défaut pour joindre FastAPI. Pour changer cette adresse, définir `VITE_API_URL` dans `web/.env.local`, puis redémarrer Vite.

@@ -68,11 +68,11 @@ async def update_item(entry_id: int, data: EntryUpdate, session: AsyncSession = 
     entry = await session.get(Entry, entry_id)
     if not entry or entry.user_id != user.id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Entrée inexistante.")
-    if data.statut is not None:
+    if "statut" in data.model_fields_set and data.statut is not None:
         entry.statut = data.statut
-    if data.note is not None:
+    if "note" in data.model_fields_set:
         entry.note = data.note
-    if data.commentaire is not None:
+    if "commentaire" in data.model_fields_set:
         entry.commentaire = data.commentaire
     session.add(entry)
     await session.commit()

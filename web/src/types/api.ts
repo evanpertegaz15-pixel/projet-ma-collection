@@ -13,6 +13,7 @@ export type AuthToken = {
 export type RegisterPayload = {
   email: string;
   password: string;
+  confirm_password: string;
 };
 
 export type LoginPayload = {
@@ -22,13 +23,12 @@ export type LoginPayload = {
 
 export type Item = {
   id: number;
-  titre: string;
-  categorie: string;
+  name: string;
+  categorie: "artillery" | "explosive" | "firearm" | "melee" | "naval" | "support";
   description: string;
   image_url: string;
-  annee: number;
-  fabricant: string;
-  pays_origine: string;
+  year: number;
+  item_range: number;
 };
 
 export type PaginatedItems = {
@@ -62,7 +62,7 @@ export type UpdateCollectionEntry = {
 
 export type Stats = {
   total: number;
-  par_statut: Record<Statut, number>;
+  par_statut: Partial<Record<Statut, number>>;
   note_moyenne: number | null;
 };
 
