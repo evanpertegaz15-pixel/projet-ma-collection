@@ -2,17 +2,14 @@
 
 ## Pré-requis
 - Docker Desktop installé et lancé
-- Créer un `venv` dans le dossier `api` avec la commande :
+- Depuis la racine du projet, créer un environnement Python local dans `api` :
 ```powershell
+cd api
 python -m venv .venv
 ```
-- Activer le `venv` avec la commande suivante :
+- Installer les dépendances dans cet environnement :
 ```powershell
-.\.venv\Scripts\Activate.ps1
-```
-- Installer les dépendances depuis le dossier `/api` :
-```powershell
-pip install -r ..\requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r ..\requirements.txt
 ```
 
 ## Lancement du site
@@ -30,13 +27,13 @@ docker ps
 ### FastAPI
 - Pour lancer l'API, exécuter la commande suivante dans le dossier `/api` :
 ```powershell
-uvicorn  main:app --reload --port 8000
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
 ```
 - L'API devient accessible sur `http://localhost:8000`
 - Et la documentation de l'API sur `http://localhost:8000/docs`
 
 ### Vite
-- Pour lancer le site web, s'assurer d'être dans le dossier `/web`, et exécuter ces commandes :
+- Pour lancer le site web, depuis un autre terminal, s'assurer d'être dans le dossier `/web`, et exécuter ces commandes :
 ```powershell
 npm install
 npm run dev
