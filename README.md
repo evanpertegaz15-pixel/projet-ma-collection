@@ -2,6 +2,18 @@
 
 ## Pré-requis
 - Docker Desktop installé et lancé
+- Créer un `venv` dans le dossier `api` avec la commande :
+```powershell
+python -m venv .venv
+```
+- Activer le `venv` avec la commande suivante :
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+- Installer les dépendances depuis le dossier `/api` :
+```powershell
+pip install -r ..\requirements.txt
+```
 
 ## Lancement du site
 ### Docker
