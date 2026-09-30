@@ -1,7 +1,7 @@
 # Projet Ma Collection - Armes XIXème siècle
 
 ## Pré-requis
-- Docker Desktop installé et lancé
+- Docker Desktop installé et lancé, la commande `docker ps` doit fonctionner.
 - Depuis la racine du projet, créer un environnement Python local dans `api` :
 ```powershell
 cd api
