@@ -8,6 +8,11 @@ from routers.collection_router import collection_router
 from routers.items import items_router
 from utils.exceptions import http_error_handler
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
@@ -19,8 +24,3 @@ app.include_router(collection_router)
 app.include_router(items_router)
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 app.add_exception_handler(HTTPException, http_error_handler)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
