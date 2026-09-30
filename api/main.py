@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 from db.init_db import init_db
 from fastapi import FastAPI, HTTPException
@@ -18,3 +19,8 @@ app.include_router(collection_router)
 app.include_router(items_router)
 app.add_middleware(CORSMiddleware, allow_origins=["http://localhost:5173"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 app.add_exception_handler(HTTPException, http_error_handler)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
