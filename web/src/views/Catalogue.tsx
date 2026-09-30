@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { ItemList } from "../components/ItemList";
@@ -10,7 +10,7 @@ import { useDebounce } from "../hooks/useDebounce";
 import { fetchItems } from "../services/http";
 import type { Item } from "../types/api";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 6;
 
 const categories = [
   { value: "", label: "Toutes les catégories" },
@@ -23,9 +23,11 @@ const categories = [
 ] as const;
 
 export function Catalogue(): React.JSX.Element {
-  const [search, setSearch] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("q") ?? "";
+  const category = searchParams.get("categorie") ?? "";
+  const pageParam = Number(searchParams.get("page"));
+  const page = Number.isInteger(pageParam) && pageParam > 0 ? pageParam : 1;
   const [result, setResult] = useState<{
     key: string;
     items: Item[];
@@ -85,13 +87,26 @@ export function Catalogue(): React.JSX.Element {
   );
 
   function handleSearchChange(value: string): void {
-    setSearch(value);
-    setPage(1);
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) nextParams.set("q", value);
+    else nextParams.delete("q");
+    nextParams.delete("page");
+    setSearchParams(nextParams, { replace: true });
   }
 
   function handleCategoryChange(event: React.ChangeEvent<HTMLSelectElement>): void {
-    setCategory(event.target.value);
-    setPage(1);
+    const nextParams = new URLSearchParams(searchParams);
+    if (event.target.value) nextParams.set("categorie", event.target.value);
+    else nextParams.delete("categorie");
+    nextParams.delete("page");
+    setSearchParams(nextParams);
+  }
+
+  function handlePageChange(nextPage: number): void {
+    const nextParams = new URLSearchParams(searchParams);
+    if (nextPage > 1) nextParams.set("page", String(nextPage));
+    else nextParams.delete("page");
+    setSearchParams(nextParams);
   }
 
   return (
@@ -130,7 +145,7 @@ export function Catalogue(): React.JSX.Element {
             {total} résultat{total > 1 ? "s" : ""}
           </p>
           <ItemList items={items} />
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage}/>
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange}/>
         </>
       ) : null}
     </main>

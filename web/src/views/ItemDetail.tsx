@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
@@ -8,7 +8,15 @@ import { useAuth } from "../context/useAuth";
 
 export function ItemDetail(): React.JSX.Element {
   const { itemId } = useParams<{ itemId: string }>();
+  const location = useLocation();
   const { token, user } = useAuth();
+  const previousLocation = (location.state as { from?: unknown } | null)?.from;
+  const catalogueUrl =
+    typeof previousLocation === "string" &&
+    previousLocation.startsWith("/") &&
+    !previousLocation.startsWith("//")
+      ? previousLocation
+      : "/";
   const id = Number(itemId);
   const [itemResult, setItemResult] = useState<{
     id: number;
@@ -77,14 +85,14 @@ export function ItemDetail(): React.JSX.Element {
     return (
       <main className="page">
         <ErrorState message={error ?? "Arme historique introuvable."} />
-        <Link to="/">Retour au catalogue</Link>
+        <Link to={catalogueUrl}>Retour au catalogue</Link>
       </main>
     );
   }
 
   return (
     <main className="page">
-      <Link to="/">← Retour au catalogue</Link>
+      <Link to={catalogueUrl}>← Retour au catalogue</Link>
       <article className="item-detail">
         <img src={resolveItemImage(item.image_url)} alt={`Illustration historique de ${item.name}`}/>
         <div>
