@@ -62,7 +62,7 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
         <p>Ajouté le {new Date(entry.date_ajout).toLocaleDateString("fr-FR")}</p>
         <div className="entry-rating">
           <span className="entry-rating__label">Votre note</span>
-          <strong>{entry.note === null ? "Non noté" : `${entry.note}/10`}</strong>
+          <strong>{entry.note === null ? "Non noté" : `${entry.note}/5`}</strong>
         </div>
         <section className="entry-comment" aria-label="Commentaire enregistré">
           <h3>Commentaire</h3>
@@ -79,8 +79,8 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
           </label>
           <label className="entry-form__note">Modifier la note
             <span className="entry-form__note-control">
-              <input type="number" min="0" max="10" value={note} onChange={(event) => setNote(event.target.value)} aria-label="Note sur 10"/>
-              <span aria-hidden="true">/10</span>
+              <input type="number" min="1" max="5" value={note} onChange={(event) => setNote(event.target.value)} aria-label="Note sur 5"/>
+              <span aria-hidden="true">/5</span>
             </span>
           </label>
           <label>Modifier le commentaire

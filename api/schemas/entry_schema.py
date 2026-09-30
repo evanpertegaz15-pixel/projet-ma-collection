@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from schemas.item_schema import ItemPublic
 from typing import Literal
 
@@ -16,12 +16,12 @@ class EntryPublic(BaseModel):
 class EntryCreate(BaseModel):
     item_id: int
     statut: EntryType
-    note: int | None = None
+    note: int | None = Field(default=None, ge=1, le=5)
     commentaire: str | None = None
 
 class EntryUpdate(BaseModel):
     statut: EntryType | None = None
-    note: int | None = None
+    note: int | None = Field(default=None, ge=1, le=5)
     commentaire: str | None = None
 
 class EntryStats(BaseModel):

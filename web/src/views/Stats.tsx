@@ -67,7 +67,7 @@ export function Stats(): React.JSX.Element {
           ))}
           <article className="item-card item-card__content">
             <span>Note moyenne</span>
-            <strong>{stats.note_moyenne === null ? "—" : stats.note_moyenne.toFixed(1)}</strong>
+            <strong>{stats.note_moyenne === null ? "—" : `${stats.note_moyenne.toFixed(1)}/5`}</strong>
           </article>
         </section>
       ) : null}
