@@ -16,7 +16,7 @@ async def list_items(q: str | None = None, categorie: ItemType | None = None, pa
     logger.info(f"GET /items")
     query = select(Item) # SELECT * FROM item
     if q:
-        query = query.where(Item.name.contains(q)) # WHERE name LIKE %q%
+        query = query.where(Item.name.ilike(f"%{q}%")) # Case-insensitive
     if categorie:
         query = query.where(Item.categorie == categorie) # AND categorie = categorie
     total_query = select(func.count()).select_from(query.subquery())
