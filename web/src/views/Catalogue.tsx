@@ -6,6 +6,7 @@ import { ItemList } from "../components/ItemList";
 import { Loader } from "../components/Loader";
 import { Pagination } from "../components/Pagination";
 import { Search } from "../components/Search";
+import { useAuth } from "../context/useAuth";
 import { useDebounce } from "../hooks/useDebounce";
 import { fetchItems } from "../services/http";
 import type { Item } from "../types/api";
@@ -23,6 +24,7 @@ const categories = [
 ] as const;
 
 export function Catalogue(): React.JSX.Element {
+  const { user, isLoading: isAuthLoading, signOut } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("q") ?? "";
   const category = searchParams.get("categorie") ?? "";
@@ -119,7 +121,11 @@ export function Catalogue(): React.JSX.Element {
           <Link to="/">Catalogue</Link>
           <Link to="/collection">Ma collection</Link>
           <Link to="/stats">Statistiques</Link>
-          <Link to="/login">Connexion</Link>
+          {isAuthLoading ? null : user !== null ? (
+            <button type="button" onClick={signOut}>Déconnexion</button>
+          ) : (
+            <Link to="/login">Connexion</Link>
+          )}
         </nav>
       </header>
       <section className="filters" aria-label="Recherche et filtre">

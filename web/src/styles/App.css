@@ -36,6 +36,14 @@
   color: #fff;
 }
 
+.navigation button {
+  min-height: 36px;
+  padding: 8px 12px;
+  color: #263b4f;
+  background: #fff;
+  cursor: pointer;
+}
+
 .filters {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 240px;
@@ -239,6 +247,88 @@ button:disabled {
   display: grid;
   gap: 18px;
   margin: 24px 0;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  color: #fff;
+  background: #263b4f;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.entry-rating {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.entry-rating__label {
+  font-weight: 700;
+}
+
+.entry-rating strong {
+  color: #533c0c;
+}
+
+.entry-comment {
+  padding-left: 12px;
+  border-left: 3px solid #dfbd78;
+}
+
+.entry-comment h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.entry-comment p {
+  margin: 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.entry-form {
+  display: grid;
+  gap: 12px;
+}
+
+.entry-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.entry-form textarea {
+  min-height: 88px;
+  padding: 10px 12px;
+  border: 1px solid #a9adb2;
+  border-radius: 8px;
+  font: inherit;
+  resize: vertical;
+}
+
+.entry-form__note-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.entry-form__note-control input {
+  width: 84px;
+}
+
+.entry-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 @media (max-width: 760px) {

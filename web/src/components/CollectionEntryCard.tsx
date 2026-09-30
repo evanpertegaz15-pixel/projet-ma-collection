@@ -60,6 +60,14 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
         <span className="tag">{entry.item.categorie}</span>
         <h2><Link to={`/items/${entry.item.id}`}>{entry.item.name}</Link></h2>
         <p>Ajouté le {new Date(entry.date_ajout).toLocaleDateString("fr-FR")}</p>
+        <div className="entry-rating">
+          <span className="entry-rating__label">Votre note</span>
+          <strong>{entry.note === null ? "Non noté" : `${entry.note}/10`}</strong>
+        </div>
+        <section className="entry-comment" aria-label="Commentaire enregistré">
+          <h3>Commentaire</h3>
+          <p>{entry.commentaire?.trim() || "Aucun commentaire."}</p>
+        </section>
         <form className="entry-form" onSubmit={save}>
           <label>
             Statut
@@ -69,14 +77,19 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
               ))}
             </select>
           </label>
-          <label>Note sur 10
-            <input type="number" min="0" max="10" value={note} onChange={(event) => setNote(event.target.value)}/>
+          <label className="entry-form__note">Modifier la note
+            <span className="entry-form__note-control">
+              <input type="number" min="0" max="10" value={note} onChange={(event) => setNote(event.target.value)} aria-label="Note sur 10"/>
+              <span aria-hidden="true">/10</span>
+            </span>
           </label>
-          <label>Commentaire
+          <label>Modifier le commentaire
             <textarea maxLength={200} value={commentaire} onChange={(event) => setCommentaire(event.target.value)} rows={3}/>
           </label>
-          <button type="submit" disabled={isBusy}>Enregistrer</button>
-          <button type="button" disabled={isBusy} onClick={remove}>Supprimer</button>
+          <div className="entry-form__actions">
+            <button type="submit" disabled={isBusy}>Enregistrer</button>
+            <button type="button" disabled={isBusy} onClick={remove}>Supprimer</button>
+          </div>
           {message !== null ? <p className="state-message">{message}</p> : null}
         </form>
       </div>
