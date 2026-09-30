@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { ImageLightbox } from "./ImageLightbox";
 import { resolveItemImage } from "../services/http";
 import type { Item } from "../types/api";
 
@@ -11,7 +12,7 @@ export function ItemCard({ item }: ItemCardProps): React.JSX.Element {
 
   return (
     <article className="item-card">
-      <img className="item-card__image" src={resolveItemImage(item.image_url)} alt={`Illustration historique de ${item.name}`}/>
+      <ImageLightbox className="item-card__image" src={resolveItemImage(item.image_url)} alt={`Illustration historique de ${item.name}`} />
       <div className="item-card__content">
         <span className="tag">{item.categorie}</span>
         <h2>{item.name}</h2>

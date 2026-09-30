@@ -93,6 +93,57 @@ button:disabled {
   background: #d8d8d8;
 }
 
+.image-lightbox__trigger {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  cursor: zoom-in;
+}
+
+.image-lightbox__trigger:focus-visible {
+  outline: 3px solid #dfbd78;
+  outline-offset: -3px;
+}
+
+.image-lightbox__dialog {
+  position: fixed;
+  max-width: none;
+  max-height: none;
+  padding: 48px 16px 16px;
+  overflow: visible;
+  background: #171717;
+  border: 0;
+  border-radius: 8px;
+}
+
+.image-lightbox__dialog::backdrop {
+  background: rgb(0 0 0 / 88%);
+}
+
+.image-lightbox__preview {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(92vw, 1400px);
+  max-height: calc(100dvh - 88px);
+  object-fit: contain;
+}
+
+.image-lightbox__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-height: 36px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
 .item-card__content {
   display: grid;
   gap: 10px;
@@ -151,7 +202,7 @@ button:disabled {
   border-radius: 12px;
 }
 
-.item-detail img {
+.item-detail__image {
   width: 100%;
   min-height: 280px;
   object-fit: cover;

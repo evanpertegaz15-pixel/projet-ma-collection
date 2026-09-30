@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ImageLightbox } from "./ImageLightbox";
 import { resolveItemImage } from "../services/http";
 import type { CollectionEntry, Statut, UpdateCollectionEntry } from "../types/api";
 
@@ -54,7 +55,7 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
 
   return (
     <article className="item-card">
-      <img className="item-card__image" src={resolveItemImage(entry.item.image_url)} alt={`Illustration de ${entry.item.name}`}/>
+      <ImageLightbox className="item-card__image" src={resolveItemImage(entry.item.image_url)} alt={`Illustration de ${entry.item.name}`} />
       <div className="item-card__content">
         <span className="tag">{entry.item.categorie}</span>
         <h2><Link to={`/items/${entry.item.id}`}>{entry.item.name}</Link></h2>

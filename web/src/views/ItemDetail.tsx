@@ -1,5 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { ImageLightbox } from "../components/ImageLightbox";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
 import { addCollectionEntry, fetchItem, resolveItemImage } from "../services/http";
@@ -94,7 +95,7 @@ export function ItemDetail(): React.JSX.Element {
     <main className="page">
       <Link to={catalogueUrl}>← Retour au catalogue</Link>
       <article className="item-detail">
-        <img src={resolveItemImage(item.image_url)} alt={`Illustration historique de ${item.name}`}/>
+        <ImageLightbox className="item-detail__image" src={resolveItemImage(item.image_url)} alt={`Illustration historique de ${item.name}`} />
         <div>
           <span className="tag">{item.categorie}</span>
           <h1>{item.name}</h1>
