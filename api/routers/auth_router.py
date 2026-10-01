@@ -17,7 +17,7 @@ auth_router = APIRouter()
 logger = logging.getLogger(__name__)
 
 @auth_router.post("/auth/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED, summary="Permet à un utilisateur de créer un compte.")
-async def register(data: RegisterRequest, session: AsyncSession = Depends(get_session)):
+async def register(data: RegisterRequest, session: AsyncSession = Depends(get_session)) -> User:
     logger.info(f"POST /auth/register")
     if data.password != data.confirm_password:
         logger.warning(f"Passwords are different.")
@@ -36,7 +36,7 @@ async def register(data: RegisterRequest, session: AsyncSession = Depends(get_se
     return user
 
 @auth_router.post("/auth/login", response_model=TokenResponse, status_code=status.HTTP_200_OK, summary="Permet à un utilisateur de se connecter à son compte.")
-async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)):
+async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)) -> dict:
     logger.info(f"POST /auth/login")
     result = await session.exec(select(User).where(User.email == data.email))
     user = result.first()
@@ -56,6 +56,6 @@ async def login(data: LoginRequest, session: AsyncSession = Depends(get_session)
     return {"access_token": token, "token_type": "bearer"}
 
 @auth_router.get("/auth/me", response_model=UserPublic, status_code=status.HTTP_200_OK, summary="Renvoie l'utilisateur actif.")
-async def me(user: User = Depends(get_current_user)):
+async def me(user: User = Depends(get_current_user)) -> User:
     logger.info(f"GET /auth/me")
     return user

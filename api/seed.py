@@ -13,7 +13,7 @@ from sqlmodel import select, SQLModel
 
 ITEMS = ARTILLERY_ITEMS + EXPLOSIVES_ITEMS + FIREARMS_ITEMS + MELEE_ITEMS + NAVAL_ITEMS + SUPPORT_ITEMS
 
-async def create_db():
+async def create_db() -> None:
     print("Initialisation des tables...")
     async with engine.begin() as conn: #Connect to db and close auto
         await conn.run_sync(SQLModel.metadata.create_all) #metadata -> all tables
