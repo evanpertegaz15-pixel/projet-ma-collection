@@ -11,6 +11,11 @@ python -m venv .venv
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r ..\requirements.txt
 ```
+- Initialiser la base de données depuis `/api` avec les commandes :
+```powershell
+.\.venv\Scripts\Activate.ps1
+python seed.py
+```
 
 ## Lancement du site
 ### Docker
