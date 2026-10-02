@@ -1,5 +1,7 @@
 import type {
   AuthToken,
+  ApiError,
+  ApiErrorResponse,
   CollectionEntry,
   CreateCollectionEntry,
   Item,
@@ -26,6 +28,36 @@ const localItemImages = import.meta.glob<string>("../assets/items/**/*", {
   query: "?url",
 });
 
+export class ApiClientError extends Error {
+  readonly apiError: ApiError;
+  readonly status: number;
+
+  constructor(apiError: ApiError, status: number) {
+    super(apiError.message);
+    this.name = "ApiClientError";
+    this.apiError = apiError;
+    this.status = status;
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isApiErrorResponse(value: unknown): value is ApiErrorResponse {
+  if (!isRecord(value) || !isRecord(value.erreur)) return false;
+  return typeof value.erreur.code === "number" &&
+    typeof value.erreur.message === "string";
+}
+
+function getApiError(value: unknown, status: number): ApiError {
+  if (isApiErrorResponse(value)) return value.erreur;
+  if (isRecord(value) && typeof value.detail === "string") {
+    return { code: status, message: value.detail };
+  }
+  return { code: status, message: `Erreur API (${status})` };
+}
+
 async function request<T>(path: string, init: RequestInit = {}, token?: string): Promise<T> {
   const headers = new Headers(init.headers);
   if (init.body && !headers.has("Content-Type")) {
@@ -37,13 +69,8 @@ async function request<T>(path: string, init: RequestInit = {}, token?: string):
     headers,
   });
   if (!response.ok) {
-    let message = `Erreur API (${response.status})`;
-    try {
-      const body: { detail?: string; erreur?: { message?: string } } =
-        await response.json();
-      message = body.detail ?? body.erreur?.message ?? message;
-    } catch {}
-    throw new Error(message);
+    const body: unknown = await response.json().catch(() => null);
+    throw new ApiClientError(getApiError(body, response.status), response.status);
   }
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
