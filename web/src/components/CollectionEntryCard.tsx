@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ImageLightbox } from "./ImageLightbox";
+import { ErrorState } from "./ErrorState";
 import { resolveItemImage } from "../services/http";
 import type { CollectionEntry, Statut, UpdateCollectionEntry } from "../types/api";
 
@@ -21,12 +22,14 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
   const [note, setNote] = useState<string>(entry.note?.toString() ?? "");
   const [commentaire, setCommentaire] = useState<string>(entry.commentaire ?? "");
   const [message, setMessage] = useState<string | null>(null);
+  const [hasError, setHasError] = useState<boolean>(false);
   const [isBusy, setIsBusy] = useState<boolean>(false);
 
   async function save(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setIsBusy(true);
     setMessage(null);
+    setHasError(false);
     const payload: UpdateCollectionEntry = {
       statut,
       note: note.trim() === "" ? null : Number(note),
@@ -36,6 +39,7 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
       await onSave(entry.id, payload);
       setMessage("Modifications enregistrées.");
     } catch (error: unknown) {
+      setHasError(true);
       setMessage(error instanceof Error ? error.message : "Échec de la mise à jour.");
     } finally {
       setIsBusy(false);
@@ -45,9 +49,11 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
   async function remove(): Promise<void> {
     setIsBusy(true);
     setMessage(null);
+    setHasError(false);
     try {
       await onDelete(entry.id);
     } catch (error: unknown) {
+      setHasError(true);
       setMessage(error instanceof Error ? error.message : "Échec de la suppression.");
       setIsBusy(false);
     }
@@ -90,7 +96,11 @@ export function CollectionEntryCard({entry, onSave, onDelete,}: CollectionEntryC
             <button type="submit" disabled={isBusy}>Enregistrer</button>
             <button type="button" disabled={isBusy} onClick={remove}>Supprimer</button>
           </div>
-          {message !== null ? <p className="state-message">{message}</p> : null}
+          {message !== null
+            ? hasError
+              ? <ErrorState message={message} />
+              : <p className="state-message">{message}</p>
+            : null}
         </form>
       </div>
     </article>

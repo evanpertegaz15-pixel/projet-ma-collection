@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
 import { useCollection } from "../context/useCollection";
@@ -31,7 +32,10 @@ export function Stats(): React.JSX.Element {
       </header>
       {isStatsLoading ? <Loader message="Chargement des statistiques..." /> : null}
       {!isStatsLoading && statsError !== null ? <ErrorState message={statsError} /> : null}
-      {!isStatsLoading && statsError === null && stats !== null ? (
+      {!isStatsLoading && statsError === null && stats?.total === 0 ? (
+        <EmptyState message="Ajoutez des objets à votre collection pour afficher vos statistiques." />
+      ) : null}
+      {!isStatsLoading && statsError === null && stats !== null && stats.total > 0 ? (
         <section className="item-grid stats-grid" aria-label="Statistiques de la collection">
           <article className="item-card item-card__content">
             <span className="eyebrow">Objets</span>

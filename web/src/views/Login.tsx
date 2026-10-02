@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ErrorState } from "../components/ErrorState";
+import { Loader } from "../components/Loader";
 import { useAuth } from "../context/useAuth";
 
 export function Login(): React.JSX.Element {
@@ -8,6 +10,7 @@ export function Login(): React.JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
@@ -16,6 +19,7 @@ export function Login(): React.JSX.Element {
       setMessage("Veuillez renseigner votre email et votre mot de passe.");
       return;
     }
+    setIsSubmitting(true);
     try {
       await signIn({ email, password });
       navigate("/");
@@ -23,27 +27,34 @@ export function Login(): React.JSX.Element {
       setMessage(
         error instanceof Error ? error.message : "Échec de la connexion.",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
     <main className="page form-page">
       <h1>Connexion</h1>
-      {isLoading ? <p>Vérification de la session...</p> : user !== null ? (
+      {isLoading ? <Loader message="Vérification de la session..." /> : user !== null ? (
         <button type="button" onClick={signOut}>Déconnexion</button>
       ) : (
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
-            Email
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required/>
-          </label>
-          <label>Mot de passe
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required/>
-          </label>
-          <button type="submit">Se connecter</button>
-        </form>
+        <>
+          {isSubmitting ? <Loader message="Connexion en cours..." /> : null}
+          <form className="auth-form" onSubmit={handleSubmit}>
+            <label>
+              Email
+              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required disabled={isSubmitting}/>
+            </label>
+            <label>Mot de passe
+              <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required disabled={isSubmitting}/>
+            </label>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Connexion..." : "Se connecter"}
+            </button>
+          </form>
+        </>
       )}
-      {message !== null ? <p className="state-message">{message}</p> : null}
+      {message !== null ? <ErrorState message={message} /> : null}
       {!isLoading && user === null ? (
         <p>Pas encore de compte ? <Link to="/register">S’inscrire</Link></p>
       ) : null}

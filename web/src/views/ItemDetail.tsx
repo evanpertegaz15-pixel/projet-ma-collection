@@ -1,10 +1,11 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ImageLightbox } from "../components/ImageLightbox";
+import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
 import { useCollection } from "../context/useCollection";
-import { fetchItem, resolveItemImage } from "../services/http";
+import { ApiClientError, fetchItem, resolveItemImage } from "../services/http";
 import type { Item } from "../types/api";
 import { useAuth } from "../context/useAuth";
 
@@ -25,25 +26,30 @@ export function ItemDetail(): React.JSX.Element {
     id: number;
     item: Item | null;
     error: string | null;
+    notFound: boolean;
   } | null>(null);
   const [collectionMessage, setCollectionMessage] = useState<string | null>(null);
+  const [collectionError, setCollectionError] = useState<boolean>(false);
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const invalidId = !Number.isInteger(id) || id < 1;
   const currentResult = itemResult?.id === id ? itemResult : null;
   const isLoading = !invalidId && currentResult === null;
   const error = invalidId
-    ? "Arme historique introuvable."
+    ? null
     : currentResult?.error ?? null;
+  const notFound = invalidId || currentResult?.notFound === true;
   const item = currentResult?.item ?? null;
 
   async function addToCollection(): Promise<void> {
     if (token === null || item === null) return;
     setIsAdding(true);
     setCollectionMessage(null);
+    setCollectionError(false);
     try {
       await addEntry({ item_id: item.id, statut: "a_decouvrir" });
       setCollectionMessage("Objet ajouté à votre collection.");
     } catch (requestError: unknown) {
+      setCollectionError(true);
       setCollectionMessage(
         requestError instanceof Error ? requestError.message : "Impossible d’ajouter cet objet.",
       );
@@ -56,7 +62,9 @@ export function ItemDetail(): React.JSX.Element {
     if (invalidId) return;
     const controller = new AbortController();
     fetchItem(id, controller.signal)
-      .then((loadedItem) => setItemResult({ id, item: loadedItem, error: null }))
+      .then((loadedItem) =>
+        setItemResult({ id, item: loadedItem, error: null, notFound: false }),
+      )
       .catch((requestError: unknown) => {
         if (
           requestError instanceof DOMException &&
@@ -67,6 +75,7 @@ export function ItemDetail(): React.JSX.Element {
         setItemResult({
           id,
           item: null,
+          notFound: requestError instanceof ApiClientError && requestError.status === 404,
           error:
             requestError instanceof Error
               ? requestError.message
@@ -84,10 +93,19 @@ export function ItemDetail(): React.JSX.Element {
     );
   }
 
+  if (notFound) {
+    return (
+      <main className="page">
+        <EmptyState message="Objet introuvable." />
+        <Link to={catalogueUrl}>Retour au catalogue</Link>
+      </main>
+    );
+  }
+
   if (error !== null || item === null) {
     return (
       <main className="page">
-        <ErrorState message={error ?? "Arme historique introuvable."} />
+        <ErrorState message={error ?? "Objet introuvable."} />
         <Link to={catalogueUrl}>Retour au catalogue</Link>
       </main>
     );
@@ -119,9 +137,11 @@ export function ItemDetail(): React.JSX.Element {
           ) : (
             <Link to="/login">Se connecter pour ajouter à ma collection</Link>
           )}
-          {collectionMessage !== null ? (
-            <p className="state-message">{collectionMessage}</p>
-          ) : null}
+          {collectionMessage !== null
+            ? collectionError
+              ? <ErrorState message={collectionMessage} />
+              : <p className="state-message">{collectionMessage}</p>
+            : null}
         </div>
       </article>
     </main>
