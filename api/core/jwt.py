@@ -1,7 +1,6 @@
 import jwt
 import logging
 from core.config import settings
-from datetime import datetime, timezone
 from dependencies.db import get_session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer

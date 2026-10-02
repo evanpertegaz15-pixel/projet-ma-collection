@@ -1,27 +1,27 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-export function useLocalStorage<T>(
-  cle: string,
-  valeurInitiale: T,
-): [T, (nouvelleValeur: T) => void] {
+export function useLocalStorage<T>(cle: string, valeurInitiale: T): [T, (v: T) => void] {
   const [valeur, setValeur] = useState<T>(() => {
-    const storedValue = window.localStorage.getItem(cle);
-
-    if (storedValue === null) {
-      return valeurInitiale;
-    }
-
+    const valeurStockee = window.localStorage.getItem(cle);
+    if (valeurStockee === null) return valeurInitiale;
     try {
-      return JSON.parse(storedValue) as T;
+      return JSON.parse(valeurStockee) as T;
     } catch {
+      if (typeof valeurInitiale === "string") {
+        return valeurStockee as T;
+      }
       return valeurInitiale;
     }
   });
 
-  function sauvegarder(nouvelleValeur: T): void {
+  const sauvegarder = useCallback((nouvelleValeur: T): void => {
     setValeur(nouvelleValeur);
+    if (nouvelleValeur === null) {
+      window.localStorage.removeItem(cle);
+      return;
+    }
     window.localStorage.setItem(cle, JSON.stringify(nouvelleValeur));
-  }
-
+  }, [cle]);
+  
   return [valeur, sauvegarder];
 }

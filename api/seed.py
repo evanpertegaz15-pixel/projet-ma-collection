@@ -1,8 +1,6 @@
 import asyncio
-from core.security import hash_password
 from db.init_db import engine, async_session
 from models.item_model import Item
-from models.user_model import User
 from seed_items.artillery import ARTILLERY_ITEMS
 from seed_items.explosives import EXPLOSIVES_ITEMS
 from seed_items.firearms import FIREARMS_ITEMS
