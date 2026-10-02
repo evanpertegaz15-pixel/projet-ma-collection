@@ -35,7 +35,7 @@ docker ps
 ### FastAPI
 - Pour lancer l'API, exécuter la commande suivante dans le dossier `/api` :
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000
+.\.venv\Scripts\python.exe -m uvicorn main:app --reload --port 8000 --log-level info
 ```
 - L'API devient accessible sur `http://localhost:8000`
 - Et la documentation de l'API sur `http://localhost:8000/docs`
