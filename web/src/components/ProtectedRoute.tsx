@@ -3,7 +3,7 @@ import { Loader } from "./Loader";
 import { useAuth } from "../context/useAuth";
 
 export function ProtectedRoute({ children }: { children: React.ReactNode; }): React.JSX.Element {
-  const { user, isLoading } = useAuth();
+  const { token, user, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -13,7 +13,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode; }): Re
       </main>
     );
   }
-  if (user === null) {
+  if (token === null || user === null) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
   return <>{children}</>;

@@ -6,7 +6,11 @@ import type { LoginPayload, User } from "../types/api";
 
 const TOKEN_KEY = "collection_access_token";
 
-export function AuthProvider({ children }: { children: ReactNode }): React.JSX.Element {
+type AuthProviderProps = {
+  children: ReactNode;
+};
+
+export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element {
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem(TOKEN_KEY),
   );
@@ -23,8 +27,8 @@ export function AuthProvider({ children }: { children: ReactNode }): React.JSX.E
         if (active) setUser(currentUser);
       })
       .catch(() => {
-        localStorage.removeItem(TOKEN_KEY);
         if (active) {
+          localStorage.removeItem(TOKEN_KEY);
           setToken(null);
           setUser(null);
         }

@@ -1,47 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CollectionEntryCard } from "../components/CollectionEntryCard";
 import { EmptyState } from "../components/EmptyState";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
+import { useCollection } from "../context/useCollection";
 import { useAuth } from "../context/useAuth";
-import {
-  deleteCollectionEntry,
-  fetchCollection,
-  updateCollectionEntry,
-} from "../services/http";
-import type { CollectionEntry, Statut, UpdateCollectionEntry } from "../types/api";
+import type { Statut } from "../types/api";
 
 export function Collection(): React.JSX.Element {
-  const { token, signOut, user } = useAuth();
+  const { signOut, user } = useAuth();
+  const {
+    entries,
+    isLoading,
+    error,
+    saveEntry,
+    removeEntry,
+  } = useCollection();
   const [statusFilter, setStatusFilter] = useState<Statut | "">("");
   const [sortOrder, setSortOrder] = useState<"date_desc" | "date_asc" | "note_desc" | "note_asc">("date_desc");
-  const [result, setResult] = useState<{
-    token: string;
-    entries: CollectionEntry[];
-    error: string | null;
-  } | null>(null);
-
-  useEffect(() => {
-    if (token === null) return;
-    const controller = new AbortController();
-    fetchCollection(token, controller.signal)
-      .then((entries) => setResult({ token, entries, error: null }))
-      .catch((requestError: unknown) => {
-        if (requestError instanceof DOMException && requestError.name === "AbortError") return;
-        setResult({
-          token,
-          entries: [],
-          error: requestError instanceof Error ? requestError.message : "Impossible de charger la collection.",
-        });
-      });
-    return () => controller.abort();
-  }, [token]);
-
-  const currentResult = result?.token === token ? result : null;
-  const entries = currentResult?.entries ?? [];
-  const error = currentResult?.error ?? null;
-  const isLoading = token !== null && currentResult === null;
   const visibleEntries = entries
     .filter((entry) => statusFilter === "" || entry.statut === statusFilter)
     .toSorted((first, second) => {
@@ -56,22 +33,6 @@ export function Collection(): React.JSX.Element {
       const noteDifference = first.note - second.note;
       return sortOrder === "note_desc" ? -noteDifference : noteDifference;
     });
-
-  async function saveEntry(id: number, payload: UpdateCollectionEntry): Promise<void> {
-    if (token === null) return;
-    const updated = await updateCollectionEntry(id, payload, token);
-    setResult((current) => current?.token === token
-      ? { ...current, entries: current.entries.map((entry) => entry.id === id ? updated : entry) }
-      : current);
-  }
-
-  async function removeEntry(id: number): Promise<void> {
-    if (token === null) return;
-    await deleteCollectionEntry(id, token);
-    setResult((current) => current?.token === token
-      ? { ...current, entries: current.entries.filter((entry) => entry.id !== id) }
-      : current);
-  }
 
   return (
     <main className="page">

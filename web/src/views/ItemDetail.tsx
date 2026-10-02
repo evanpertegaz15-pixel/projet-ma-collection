@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { ImageLightbox } from "../components/ImageLightbox";
 import { ErrorState } from "../components/ErrorState";
 import { Loader } from "../components/Loader";
-import { addCollectionEntry, fetchItem, resolveItemImage } from "../services/http";
+import { useCollection } from "../context/useCollection";
+import { fetchItem, resolveItemImage } from "../services/http";
 import type { Item } from "../types/api";
 import { useAuth } from "../context/useAuth";
 
@@ -11,6 +12,7 @@ export function ItemDetail(): React.JSX.Element {
   const { itemId } = useParams<{ itemId: string }>();
   const location = useLocation();
   const { token, user } = useAuth();
+  const { addEntry } = useCollection();
   const previousLocation = (location.state as { from?: unknown } | null)?.from;
   const catalogueUrl =
     typeof previousLocation === "string" &&
@@ -39,7 +41,7 @@ export function ItemDetail(): React.JSX.Element {
     setIsAdding(true);
     setCollectionMessage(null);
     try {
-      await addCollectionEntry({ item_id: item.id, statut: "a_decouvrir" }, token);
+      await addEntry({ item_id: item.id, statut: "a_decouvrir" });
       setCollectionMessage("Objet ajouté à votre collection.");
     } catch (requestError: unknown) {
       setCollectionMessage(
