@@ -11,11 +11,7 @@ python -m venv .venv
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r ..\requirements.txt
 ```
-- Initialiser la base de données depuis `/api` avec les commandes :
-```powershell
-.\.venv\Scripts\Activate.ps1
-python seed.py
-```
+- Copier `.env.example` vers `.env`, puis remplacer `SECRET_KEY` et `POSTGRES_PASSWORD` par deux valeurs distinctes générées avec la commande indiquée dans le fichier.
 
 ## Lancement du site
 ### Docker
@@ -27,6 +23,13 @@ docker compose up -d
 - Vérifier que le processus est lancé :
 ```powershell
 docker ps
+```
+
+### SQL
+- Le fichier `.env` doit être présent et contenir le même `POSTGRES_PASSWORD` que celui utilisé par `DATABASE_URL`.
+- Initialiser les données après le démarrage de PostgreSQL :
+```powershell
+.\.venv\Scripts\python.exe seed.py
 ```
 
 ### FastAPI
