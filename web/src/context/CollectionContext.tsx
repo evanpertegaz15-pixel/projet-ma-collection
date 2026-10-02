@@ -1,7 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
 import { useAuth } from "./useAuth";
 import { CollectionContext } from "./CollectionTypes";
+import type {
+  CollectionProviderProps,
+  CollectionResult,
+  StatsResult,
+} from "./CollectionTypes";
 import {
   addCollectionEntry,
   deleteCollectionEntry,
@@ -12,25 +16,8 @@ import {
 import type {
   CollectionEntry,
   CreateCollectionEntry,
-  Stats,
   UpdateCollectionEntry,
 } from "../types/api";
-
-type CollectionResult = {
-  token: string;
-  entries: CollectionEntry[];
-  error: string | null;
-};
-
-type StatsResult = {
-  token: string;
-  stats: Stats | null;
-  error: string | null;
-};
-
-type CollectionProviderProps = {
-  children: ReactNode;
-};
 
 export function CollectionProvider({
   children,

@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import type { ReactNode } from "react";
 import type {
   CollectionEntry,
   CreateCollectionEntry,
@@ -17,6 +18,22 @@ export type CollectionContextValue = {
   isStatsLoading: boolean;
   statsError: string | null;
   loadStats: () => Promise<void>;
+};
+
+export type CollectionResult = {
+  token: string;
+  entries: CollectionEntry[];
+  error: string | null;
+};
+
+export type StatsResult = {
+  token: string;
+  stats: Stats | null;
+  error: string | null;
+};
+
+export type CollectionProviderProps = {
+  children: ReactNode;
 };
 
 export const CollectionContext = createContext<CollectionContextValue | undefined>(undefined);

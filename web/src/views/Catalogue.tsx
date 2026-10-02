@@ -10,18 +10,9 @@ import { useAuth } from "../context/useAuth";
 import { useDebounce } from "../hooks/useDebounce";
 import { fetchItems } from "../services/http";
 import type { Item } from "../types/api";
+import { categories } from "./catalogueOptions";
 
 const ITEMS_PER_PAGE = 6;
-
-const categories = [
-  { value: "", label: "Toutes les catégories" },
-  { value: "artillery", label: "Artillerie" },
-  { value: "explosive", label: "Explosifs" },
-  { value: "firearm", label: "Armes à feu" },
-  { value: "melee", label: "Armes de mêlée" },
-  { value: "naval", label: "Armes navales" },
-  { value: "support", label: "Équipement de soutien" },
-] as const;
 
 export function Catalogue(): React.JSX.Element {
   const { user, isLoading: isAuthLoading, signOut } = useAuth();
